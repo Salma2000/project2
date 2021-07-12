@@ -183,15 +183,18 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	if (x == 0 && y == 0) {
 		cout << "check 1 \n";
 		//check the right cell
-		if (layer2[y][x + 1] == 1 || new_x_value < layer2[y][x + 1] || (layer1[y][x + 1] + via_cost) < layer2[y][x + 1]) {
+		if (layer2[y][x + 1] == 11 || new_x_value < layer2[y][x + 1] || ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1)) {
 			layer2[y][x + 1] = new_x_value;
-			if ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1])
+			if (((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1))
 				layer2[y][x + 1] = layer1[y][x + 1] + via_cost;
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the below cell
-		if (layer2[y + 1][x] == 1 || new_y_value < layer2[y + 1][x] || (layer1[y + 1][x] + via_cost) < layer2[y + 1][x]) {
+		if (layer2[y + 1][x] == 11 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y+1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
+
+		if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+			layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
 
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size);
 		}
@@ -201,13 +204,21 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (x == x_size - 1 && y == y_size - 1) {
 		cout << "check 2 \n";
 		//check the left cell
-		if (layer2[y][x - 1] == 1 || new_x_value < layer2[y][x - 1]) {
+		if (layer2[y][x - 1] == 11 || new_x_value < layer2[y][x - 1] || ((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1)) {
 			layer2[y][x - 1] = new_x_value;
+
+			if (((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1))
+				layer2[y][x - 1] = layer1[y][x - 1] + via_cost;
+
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the above cell
-		if (layer2[y - 1][x] == 1 || new_y_value < layer2[y - 1][x]) {
+		if (layer2[y - 1][x] == 11 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y-1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
+			
+			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
+				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
+
 			fill_layer2(x, y - 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -215,13 +226,19 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (x == x_size - 1 && y == 0) {
 		cout << "check 3 \n";
 		//check the left cell
-		if (layer2[y][x - 1] == 1 || new_x_value < layer2[y][x - 1]) {
+		if (layer2[y][x - 1] == 11 || new_x_value < layer2[y][x - 1] || ((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1)) {
 			layer2[y][x - 1] = new_x_value;
+			if (((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1))
+				layer2[y][x - 1] = layer1[y][x - 1] + via_cost;
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the below cell
-		if (layer2[y + 1][x] == 1 || new_y_value < layer2[y + 1][x]) {
+		if (layer2[y + 1][x] == 11 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
+
+			if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+				layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
+
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -229,13 +246,19 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (x == 0 && y == y_size - 1) {
 		cout << "check 4 \n";
 		//check the right cell
-		if (layer2[y][x + 1] == 1 || new_x_value < layer2[y][x + 1]) {
+		if (layer2[y][x + 1] == 11 || new_x_value < layer2[y][x + 1] || ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1)) {
 			layer2[y][x + 1] = new_x_value;
+			if (((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1))
+				layer2[y][x + 1] = layer1[y][x + 1] + via_cost;
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the top cell
-		if (layer2[y - 1][x] == 1 || new_y_value < layer2[y - 1][x]) {
+		if (layer2[y - 1][x] == 11 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
+
+			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
+				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
+
 			fill_layer2(x, y - 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -243,18 +266,28 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (x == 0) {
 		cout << "check 5 \n";
 		//check the right cell
-		if (layer2[y][x + 1] == 1 || new_x_value < layer2[y][x + 1]) {
+		if (layer2[y][x + 1] == 11 || new_x_value < layer2[y][x + 1] || ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1)) {
 			layer2[y][x + 1] = new_x_value;
+			if (((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1))
+				layer2[y][x + 1] = layer1[y][x + 1] + via_cost;
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the top cell
-		if (layer2[y - 1][x] == 1 || new_y_value < layer2[y - 1][x]) {
+		if (layer2[y - 1][x] == 11 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
+
+			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
+				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
+
 			fill_layer2(x, y - 1, layer1, layer2, x_size, y_size);
 		}
 		//check the bottom cell
-		if (layer2[y + 1][x] == 1 || new_y_value < layer2[y + 1][x]) {
+		if (layer2[y + 1][x] == 11 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
+
+			if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+				layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
+
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size);
 		}
 
@@ -263,18 +296,28 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (x == x_size - 1) {
 		cout << "check 6 \n";
 		//check the left cell
-		if (layer2[y][x - 1] == 1 || new_x_value < layer2[y][x - 1]) {
+		if (layer2[y][x - 1] == 11 || new_x_value < layer2[y][x - 1] || ((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1)) {
 			layer2[y][x - 1] = new_x_value;
+			if (((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1))
+				layer2[y][x - 1] = layer1[y][x - 1] + via_cost;
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the top cell
-		if (layer2[y - 1][x] == 1 || new_y_value < layer2[y - 1][x]) {
+		if (layer2[y - 1][x] == 11 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
+
+			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
+				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
+
 			fill_layer2(x, y - 1, layer1, layer2, x_size, y_size);
 		}
 		//check the bottom cell
-		if (layer2[y + 1][x] == 1 || new_y_value < layer2[y + 1][x]) {
+		if (layer2[y + 1][x] == 11 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
+
+			if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+				layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
+
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -282,18 +325,26 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (y == 0) {
 		cout << "check 7 \n";
 		//check the left cell
-		if (layer2[y][x - 1] == 1 || new_x_value < layer2[y][x - 1]) {
+		if (layer2[y][x - 1] == 11 || new_x_value < layer2[y][x - 1] || ((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1)) {
 			layer2[y][x - 1] = new_x_value;
+			if (((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1))
+				layer2[y][x - 1] = layer1[y][x - 1] + via_cost;
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the right cell
-		if (layer2[y][x + 1] == 1 || new_x_value < layer2[y][x + 1]) {
+		if (layer2[y][x + 1] == 11 || new_x_value < layer2[y][x + 1] || ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1)) {
 			layer2[y][x + 1] = new_x_value;
+			if (((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1))
+				layer2[y][x + 1] = layer1[y][x + 1] + via_cost;
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the bottom cell
-		if (layer2[y + 1][x] == 1 || new_y_value < layer2[y + 1][x]) {
+		if (layer2[y + 1][x] == 11 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
+
+			if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+				layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
+
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -301,18 +352,26 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else if (y == y_size - 1) {
 		cout << "check 8 \n";
 		//check the left cell
-		if (layer2[y][x - 1] == 1 || new_x_value < layer2[y][x - 1]) {
+		if (layer2[y][x - 1] == 11 || new_x_value < layer2[y][x - 1] || ((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1)) {
 			layer2[y][x - 1] = new_x_value;
+			if (((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1))
+				layer2[y][x - 1] = layer1[y][x - 1] + via_cost;
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the right cell
-		if (layer2[y][x + 1] == 1 || new_x_value < layer2[y][x + 1]) {
+		if (layer2[y][x + 1] == 11 || new_x_value < layer2[y][x + 1] || ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1)) {
 			layer2[y][x + 1] = new_x_value;
+			if (((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1))
+				layer2[y][x + 1] = layer1[y][x + 1] + via_cost;
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the top cell
-		if (layer2[y - 1][x] == 1 || new_y_value < layer2[y - 1][x]) {
+		if (layer2[y - 1][x] == 11 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
+
+			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
+				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
+
 			fill_layer2(x, y - 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -320,23 +379,35 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 	else {
 		cout << "check 9 \n";
 		//check the left cell
-		if (layer2[y][x - 1] == 1 || new_x_value < layer2[y][x - 1]) {
+		if (layer2[y][x - 1] == 11 || new_x_value < layer2[y][x - 1] || ((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1)) {
 			layer2[y][x - 1] = new_x_value;
+			if (((layer1[y][x - 1] + via_cost) < layer2[y][x - 1] && layer1[y][x - 1] != -1))
+				layer2[y][x - 1] = layer1[y][x - 1] + via_cost;
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the right cell
-		if (layer2[y][x + 1] == 1 || new_x_value < layer2[y][x + 1]) {
+		if (layer2[y][x + 1] == 11 || new_x_value < layer2[y][x + 1] || ((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1)) {
 			layer2[y][x + 1] = new_x_value;
+			if (((layer1[y][x + 1] + via_cost) < layer2[y][x + 1] && layer1[y][x + 1] != -1))
+				layer2[y][x + 1] = layer1[y][x + 1] + via_cost;
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size);
 		}
 		//check the top cell
-		if (layer2[y - 1][x] == 1 || new_y_value < layer2[y - 1][x]) {
+		if (layer2[y - 1][x] == 11 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
+
+			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
+				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
+
 			fill_layer2(x, y - 1, layer1, layer2, x_size, y_size);
 		}
 		//check the bottom cell
-		if (layer2[y + 1][x] == 1 || new_y_value < layer2[y + 1][x]) {
+		if (layer2[y + 1][x] == 11 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
+
+			if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+				layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
+
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size);
 		}
 	}
@@ -347,13 +418,18 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 int main() {
 
 	int x_source = 0, y_source = 0, x_size = 20, y_size = 20;
-	int**layer1 = new int*[20];
+	int**layer1 = new int*[y_size];
+	int**layer2 = new int*[y_size];
 
-	for (int i = 0; i < 20; i++)
-		layer1[i] = new int[20];
 
-	for (int i = 0; i < 20; i++)
-		for (int j = 0; j < 20; j++) {
+	for (int i = 0; i < y_size; i++) {
+		layer1[i] = new int[x_size];
+		layer2[i] = new int[x_size];
+	}
+
+
+	for (int i = 0; i < y_size; i++)
+		for (int j = 0; j < x_size; j++) {
 			layer1[i][j] = 1;
 		}
 
@@ -377,16 +453,52 @@ int main() {
 		layer1[y_source][x_source + 1] = 1;
 		layer1[y_source][x_source - 1] = 1;
 	}
-	
+	if (y_source == 0)
+		layer1[y_source + 1][x_source] = 10;
+	else if (y_source == y_size - 1)
+		layer1[y_source - 1][x_source] = 10;
+	else {
+		layer1[y_source + 1][x_source] = 10;
+		layer1[y_source - 1][x_source] = 10;
+	}
+		//fill layer2
 
+	for (int i = 0; i < y_size; i++)
+		for (int j = 0; j < x_size; j++) {
+			layer2[i][j] = 11;
+		}
 
-	layer1[y_source][x_source + 1] = 1;
-	layer1[y_source][x_source - 1] = 1;
-	cout << "check 10 \n";
+	fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size);
+	layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
+	if (x_source == 0)
+		layer2[y_source][x_source + 1] = 20;
+	else if (x_source == x_size - 1)
+		layer2[y_source][x_source - 1] = 20;
+	else {
+		layer2[y_source][x_source + 1] = 20;
+		layer2[y_source][x_source - 1] = 20;
+	}
+	if (y_source == 0)
+		layer2[y_source + 1][x_source] = 11;
+	else if (y_source == y_size - 1)
+		layer2[y_source - 1][x_source] = 11;
+	else {
+		layer2[y_source + 1][x_source] = 11;
+		layer2[y_source - 1][x_source] = 11;
+	}
+
 
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
 			cout <<setw(4) <<layer1[i][j];
+		}
+		cout << endl;
+	}
+	cout << "\n \n \n";
+
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
+			cout << setw(4) << layer2[i][j];
 		}
 		cout << endl;
 	}
