@@ -407,10 +407,9 @@ struct paramters
 
 };
 
-vector<vector<paramters>> file_read(string filename) {
+vector<vector<paramters>> file_read(string filename, vector<vector<paramters>> &nets2, vector <paramters>& obstacles) {
 
 	paramters p;
-	vector <paramters> obstacles;
 	vector <int> num;
 	vector <int> num_2;
 	vector<vector<int>> nets;
@@ -512,7 +511,6 @@ vector<vector<paramters>> file_read(string filename) {
 		nets.push_back(num_2);
 		num_2.clear();
 	}
-	vector<vector<paramters>> nets2;
 	paramters p1;
 	vector<paramters> num_3;
 	for (int i = 0; i < nets.size(); i++) {
@@ -533,14 +531,6 @@ vector<vector<paramters>> file_read(string filename) {
 		p1.y_value = num[i + 2];
 		obstacles.push_back(p1);
 	}
-
-	for (int i = 0; i < nets2.size(); i++) {
-		for (int j = 0; j < nets2[i].size(); j++)
-			cout << nets2[i][j].layer << "   " << nets2[i][j].x_value << "   " << nets2[i][j].y_value << "   ";
-		cout << endl;
-	}
-
-
 	return nets2;
 }
 
@@ -1440,84 +1430,198 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 	return path;
 }
 
+
 int main() {
 
 	int x_source = 3, y_source = 5, x_size = 25, y_size = 25;
 	int**layer1 = new int*[y_size];
 	int**layer2 = new int*[y_size];
-
+	vector<paramters> full_path;
+	vector<paramters> path;
+	vector<vector<paramters>> output_nets;
 
 	for (int i = 0; i < y_size; i++) {
 		layer1[i] = new int[x_size];
 		layer2[i] = new int[x_size];
 	}
+	vector <paramters> obstacles = { {1,5,3}, {2,2,7} , {1,8,2} };
+
+	vector<vector<paramters>> nets=
+
+	{ {{1, 10, 20} , {2, 3, 5}, {1, 4, 5} , {2, 10, 5}},
+	{ {1, 3, 5}, {2, 10, 20} },
+	{ {1, 10, 5}, {2, 3, 15} }
+};
 
 
-	for (int i = 0; i < y_size; i++)
-		for (int j = 0; j < x_size; j++) {
-			layer1[i][j] = 1;
+		//file_read("input.txt", nets, obstacles);
+
+	int layer1_smallest_value, layer2_smallest_value;
+
+	for (int c = 0; c < nets.size(); c++) {
+		
+		//do the element 0
+		//fill layer1
+		x_source = nets[c][0].x_value;
+		y_source = nets[c][0].y_value;
+		for (int i = 0; i < y_size; i++)
+			for (int j = 0; j < x_size; j++) {
+				layer1[i][j] = 1;
+				layer2[i][j] = 11;
+
+			}
+
+		//fill the obstacles here
+		for (int i = 0; i < obstacles.size(); i++) {
+			if (obstacles[i].layer == 1) {
+				layer1[obstacles[i].y_value][obstacles[i].x_value] = -1;
+			}
+			else {
+				layer2[obstacles[i].y_value][obstacles[i].x_value] = -1;
+			}
 		}
 
-	//source
-	layer1[y_source][x_source] = 0;
-	
-	//obstacles
-	layer1[2][6] = -1;
-	layer1[5][6] = -1;
-	layer1[3][11] = -1;
-	layer1[2][19] = -1;
-	layer1[10][10] = -1;
 
-	//fill layer1
-	fill_layer1(x_source, y_source, layer1, x_size, y_size, 0);
-	if(x_source == 0)
-	layer1[y_source][x_source + 1] = 1;
-	else if (x_source == x_size-1)
-	layer1[y_source][x_source - 1] = 1;
-	else {
-		layer1[y_source][x_source + 1] = 1;
-		layer1[y_source][x_source - 1] = 1;
-	}
+		//source
+		layer1[y_source][x_source] = 0;
 
-	//fill layer2
 
-	for (int i = 0; i < y_size; i++)
-		for (int j = 0; j < x_size; j++) {
-			layer2[i][j] = 11;
+		fill_layer1(x_source, y_source, layer1, x_size, y_size, 0);
+		if (x_source == 0 && layer1[y_source][x_source + 1] != -1)
+			layer1[y_source][x_source + 1] = 1;
+		else if (x_source == x_size - 1 && layer1[y_source][x_source - 1] != -1)
+			layer1[y_source][x_source - 1] = 1;
+		else {
+			if(layer1[y_source][x_source + 1] != -1 )
+			layer1[y_source][x_source + 1] = 1;
+			if(layer1[y_source][x_source - 1] != -1)
+			layer1[y_source][x_source - 1] = 1;
 		}
 
-	fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size, 10);
-	layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
+		//fill layer2
 
-	if (y_source == 0)
-		layer2[y_source + 1][x_source] = 11;
-	else if (y_source == y_size - 1)
-		layer2[y_source - 1][x_source] = 11;
-	else {
-		layer2[y_source + 1][x_source] = 11;
-		layer2[y_source - 1][x_source] = 11;
-	}
+		fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size, 10);
+		layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
 
-
-	vector<vector<paramters>> nets = file_read("input.txt");
-
-
-	for (int i = 0; i < nets.size(); i++) {
-		nets[i][0].layer
-		for (int j = 1; j < nets[i].size(); j++) {
-
-
+		if (y_source == 0 && layer2[y_source + 1][x_source] != -1)
+			layer2[y_source + 1][x_source] = 11;
+		else if (y_source == y_size - 1 && layer2[y_source - 1][x_source] != -1)
+			layer2[y_source - 1][x_source] = 11;
+		else {
+			if(layer2[y_source + 1][x_source] != -1)
+			layer2[y_source + 1][x_source] = 11;
+			if(layer2[y_source - 1][x_source] != -1)
+			layer2[y_source - 1][x_source] = 11;
 		}
+
+		for (int k = 1; k < nets[c].size(); k++) {
+			paramters target;
+			target.layer = nets[c][k].layer;
+			target.x_value = nets[c][k].x_value;
+			target.y_value = nets[c][k].y_value;
+			bool target_exist = true;
+			for (int i = 0; i < full_path.size();i++)
+				if (target.layer == full_path[i].layer && target.x_value == full_path[i].x_value && target.y_value == full_path[i].y_value)
+					target_exist = false;
+
+			if (target_exist) {
+
+			path.clear();
+			path = Back_Track(target, layer1, layer2, x_size, y_size);
+
+
+
+			x_source = nets[c][k].x_value;
+			y_source = nets[c][k].y_value;
+			for (int i = 0; i < y_size; i++)
+				for (int j = 0; j < x_size; j++) {
+					layer1[i][j] = 1;
+					layer2[i][j] = 11;
+				}
+
+			//fill the obstacles here
+
+			for (int i = 0; i < obstacles.size(); i++) {
+				if (obstacles[i].layer == 1) {
+					layer1[obstacles[i].y_value][obstacles[i].x_value] = -1;
+				}
+				else {
+					layer2[obstacles[i].y_value][obstacles[i].x_value] = -1;
+				}
+			}
+
+
+			for (int i = 0; i < path.size(); i++) {
+				if (path[i].layer == 1) {
+					layer1[path[i].y_value][path[i].x_value] = 0;
+				}
+				full_path.push_back(path[i]);
+			}
+
+			fill_layer1(x_source, y_source, layer1, x_size, y_size, 0);
+
+			for (int i = 0; i < path.size(); i++) {
+				if (path[i].layer == 1) {
+					y_source = path[i].y_value;
+					x_source = path[i].x_value;
+					if (x_source == 0 && layer1[path[i].y_value][path[i].x_value + 1] != 0 && layer1[path[i].y_value][path[i].x_value + 1] != -1)
+						layer1[path[i].y_value][path[i].x_value + 1] = 1;
+					else if (x_source == x_size - 1 && layer1[path[i].y_value][path[i].x_value - 1] != 0 && layer1[path[i].y_value][path[i].x_value - 1] != -1)
+						layer1[path[i].y_value][path[i].x_value - 1] = 1;
+					else {
+						if (layer1[path[i].y_value][path[i].x_value + 1] != 0 && layer1[path[i].y_value][path[i].x_value + 1] != -1)
+							layer1[path[i].y_value][path[i].x_value + 1] = 1;
+						if (layer1[path[i].y_value][path[i].x_value - 1] != 0 && layer1[path[i].y_value][path[i].x_value - 1] != -1)
+							layer1[path[i].y_value][path[i].x_value - 1] = 1;
+					}
+				}
+			}
+
+
+			for (int i = 0; i < path.size(); i++) {
+				if (path[i].layer == 2) {
+					layer2[path[i].y_value][path[i].x_value] = 0;
+				}
+			}
+			x_source = nets[c][0].x_value;
+			y_source = nets[c][0].y_value;
+			fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size, 10);
+			layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
+
+
+			for (int i = 0; i < path.size(); i++) {
+				if (path[i].layer == 2) {
+					y_source = path[i].y_value;
+					x_source = path[i].x_value;
+					if (y_source == 0 && layer2[y_source + 1][x_source] != 0 && layer2[y_source + 1][x_source] != -1)
+						layer2[y_source + 1][x_source] = 11;
+					else if (y_source == y_size - 1 && layer2[y_source - 1][x_source] != 0 && layer2[y_source - 1][x_source] != -1)
+						layer2[y_source - 1][x_source] = 11;
+					else {
+						if (layer2[y_source + 1][x_source] != 0 && layer2[y_source + 1][x_source] != -1)
+							layer2[y_source + 1][x_source] = 11;
+						if (layer2[y_source - 1][x_source] != 0 && layer2[y_source - 1][x_source] != -1)
+							layer2[y_source - 1][x_source] = 11;
+					}
+				}
+			}
+		}
+		}
+
+		output_nets.push_back(full_path);
+		full_path.clear();
 	}
+	ofstream output_file;
+	output_file.open("output.txt");
 
+	for (int i = 0; i < output_nets.size(); i++) {
+		output_file << "net" << i + 1;
+		for (int j = 0; j < output_nets[i].size(); j++)
+			output_file <<" (" << output_nets[i][j].layer << "," << output_nets[i][j].x_value << "," << output_nets[i][j].y_value << ")" << " ";
 
-	paramters target;
-	target.layer = 1;
-	target.x_value = 1;
-	target.y_value = 1;
-	vector<paramters> path = Back_Track(target, layer1, layer2, x_size, y_size);
-
-
+		output_file << "\n";
+	}
+	output_file.close();
 	system("pause");
 	return 0;
 }
