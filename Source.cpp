@@ -12,7 +12,7 @@ void fill_layer1(int x, int y, int** layer1, int x_size, int y_size, int smalles
 	new_y_value = layer1[y][x] + 10;
 	new_x_value = layer1[y][x] + 1;
 
-	
+
 
 	//left top edge
 	if (x == 0 && y == 0) {
@@ -24,9 +24,9 @@ void fill_layer1(int x, int y, int** layer1, int x_size, int y_size, int smalles
 		//check the below cell
 		if (layer1[y + 1][x] == smallest_value + 1 || new_y_value < layer1[y + 1][x]) {
 			layer1[y + 1][x] = new_y_value;
-			fill_layer1(x, y + 1, layer1, x_size, y_size, smallest_value );
+			fill_layer1(x, y + 1, layer1, x_size, y_size, smallest_value);
 		}
-		
+
 	}
 	//right bottom edge
 	else if (x == x_size - 1 && y == y_size - 1) {
@@ -184,11 +184,11 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 			fill_layer2(x + 1, y, layer1, layer2, x_size, y_size, smallest_value);
 		}
 		//check the below cell
-		if (layer2[y + 1][x] == smallest_value + 1 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y+1][x] != -1)) {
+		if (layer2[y + 1][x] == smallest_value + 1 || new_y_value < layer2[y + 1][x] || ((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1)) {
 			layer2[y + 1][x] = new_y_value;
 
-		if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
-			layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
+			if (((layer1[y + 1][x] + via_cost) < layer2[y + 1][x] && layer1[y + 1][x] != -1))
+				layer2[y + 1][x] = layer1[y + 1][x] + via_cost;
 
 			fill_layer2(x, y + 1, layer1, layer2, x_size, y_size, smallest_value);
 		}
@@ -206,9 +206,9 @@ void fill_layer2(int x, int y, int** layer1, int** layer2, int x_size, int y_siz
 			fill_layer2(x - 1, y, layer1, layer2, x_size, y_size, smallest_value);
 		}
 		//check the above cell
-		if (layer2[y - 1][x] == smallest_value + 1 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y-1][x] != -1)) {
+		if (layer2[y - 1][x] == smallest_value + 1 || new_y_value < layer2[y - 1][x] || ((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1)) {
 			layer2[y - 1][x] = new_y_value;
-			
+
 			if (((layer1[y - 1][x] + via_cost) < layer2[y - 1][x] && layer1[y - 1][x] != -1))
 				layer2[y - 1][x] = layer1[y - 1][x] + via_cost;
 
@@ -407,36 +407,46 @@ struct paramters
 
 };
 
-vector<vector<paramters>> file_read(string filename, vector<vector<paramters>> &nets2, vector <paramters>& obstacles) {
+vector<vector<paramters>> file_read(string filename, int& x_size, int& y_size, vector <paramters>& obstacles)
+{
 
+	deque<string> vec1, vec_2, vec_3;
 	paramters p;
+
 	vector <int> num;
 	vector <int> num_2;
 	vector<vector<int>> nets;
-	string x_size;
-	string y_size;
-	deque<string> vec1, vec_2, vec_3;
-
 	fstream file;
-	file.open(filename, ios::in);
+	file.open("input.txt", ios::in);
 	string line;
 	while (file.good())
 	{
 
 		getline(file, line);
 		vec1.push_back(line);
+
+		//cout << line << endl
+
 	}
 	file.close();
 	string s;
 	for (int i = 0; i < vec1.size(); i++)
 	{
 		s.clear();
+
 		for (int j = 0; j < vec1[i].size(); j++)
 		{
 
 			if (vec1[i][j] == 'x')
 			{
-				x_size = s;
+				x_size = stoi(s.c_str());
+				s.clear();
+			}
+
+			else if (vec1[0].size() - 1 == j)
+			{
+				s = s + vec1[i][j];
+				y_size = stoi(s.c_str());
 				s.clear();
 			}
 
@@ -508,9 +518,12 @@ vector<vector<paramters>> file_read(string filename, vector<vector<paramters>> &
 
 
 		}
-		nets.push_back(num_2);
-		num_2.clear();
+		if (!num_2.empty()) {
+			nets.push_back(num_2);
+			num_2.clear();
+		}
 	}
+	vector<vector<paramters>> nets2;
 	paramters p1;
 	vector<paramters> num_3;
 	for (int i = 0; i < nets.size(); i++) {
@@ -531,9 +544,9 @@ vector<vector<paramters>> file_read(string filename, vector<vector<paramters>> &
 		p1.y_value = num[i + 2];
 		obstacles.push_back(p1);
 	}
+
 	return nets2;
 }
-
 
 vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x_size, int y_size) {
 	vector<paramters> path;
@@ -551,7 +564,7 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 		//check the edges
 		//check top left edge
 		if (target.x_value == 0 && target.y_value == 0) {
-			
+
 
 			switch (target.layer)
 			{
@@ -689,7 +702,7 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 					top_cost = 999999;
 				else
 					top_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value - 1][target.x_value];
-				
+
 				//calculate via cost
 				if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
 					via_cost = 999999;
@@ -722,172 +735,172 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 		//check top right edge
 		else if (target.x_value == x_size - 1 && target.y_value == 0) {
 
-		switch (target.layer)
-		{
-		case 1: {
-			int left_cost, bottom_cost, via_cost;
+			switch (target.layer)
+			{
+			case 1: {
+				int left_cost, bottom_cost, via_cost;
 
-			//calculate the left cost
-			if (layer1[target.y_value][target.x_value - 1] == -1 || layer1[target.y_value][target.x_value - 1] >= layer1[target.y_value][target.x_value])
-				left_cost = 999999;
-			else
-				left_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value - 1];
-			//calculate the bottom cost
-			if (layer1[target.y_value + 1][target.x_value] == -1 || layer1[target.y_value + 1][target.x_value] >= layer1[target.y_value][target.x_value])
-				bottom_cost = 999999;
-			else
-				bottom_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value + 1][target.x_value];
-			//calculate via cost
-			if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
-				via_cost = 999999;
-			else
-				via_cost = layer1[target.y_value][target.x_value] - layer2[target.y_value][target.x_value];
+				//calculate the left cost
+				if (layer1[target.y_value][target.x_value - 1] == -1 || layer1[target.y_value][target.x_value - 1] >= layer1[target.y_value][target.x_value])
+					left_cost = 999999;
+				else
+					left_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value - 1];
+				//calculate the bottom cost
+				if (layer1[target.y_value + 1][target.x_value] == -1 || layer1[target.y_value + 1][target.x_value] >= layer1[target.y_value][target.x_value])
+					bottom_cost = 999999;
+				else
+					bottom_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value + 1][target.x_value];
+				//calculate via cost
+				if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
+					via_cost = 999999;
+				else
+					via_cost = layer1[target.y_value][target.x_value] - layer2[target.y_value][target.x_value];
 
-			//check the min cost direction
-			//move left if the left cost is the minimum
-			if (left_cost <= bottom_cost && left_cost <= via_cost) {
-				target.x_value--;
-				path.push_back(target);
+				//check the min cost direction
+				//move left if the left cost is the minimum
+				if (left_cost <= bottom_cost && left_cost <= via_cost) {
+					target.x_value--;
+					path.push_back(target);
+				}
+				//move down if the bottom cost is the minimum
+				else if (bottom_cost <= left_cost && bottom_cost <= via_cost) {
+					target.y_value++;
+					path.push_back(target);
+				}
+				//move to layer2 if the via cost is the minimum
+				else if (via_cost <= left_cost && via_cost <= bottom_cost) {
+					target.layer = 2;
+					path.push_back(target);
+				}
 			}
-			//move down if the bottom cost is the minimum
-			else if (bottom_cost <= left_cost && bottom_cost <= via_cost) {
-				target.y_value++;
-				path.push_back(target);
-			}
-			//move to layer2 if the via cost is the minimum
-			else if (via_cost <= left_cost && via_cost <= bottom_cost) {
-				target.layer = 2;
-				path.push_back(target);
-			}
-		}
-				break;
-		case 2: {
+					break;
+			case 2: {
 
-			int left_cost, bottom_cost, via_cost;
+				int left_cost, bottom_cost, via_cost;
 
-			//calculate the left cost
-			if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
-				left_cost = 999999;
-			else
-				left_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value - 1];
-			//calculate the bottom cost
-			if (layer2[target.y_value + 1][target.x_value] == -1 || layer2[target.y_value + 1][target.x_value] >= layer2[target.y_value][target.x_value])
-				bottom_cost = 999999;
-			else
-				bottom_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value + 1][target.x_value];
-			//calculate via cost
-			if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
-				via_cost = 999999;
-			else
-				via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
+				//calculate the left cost
+				if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
+					left_cost = 999999;
+				else
+					left_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value - 1];
+				//calculate the bottom cost
+				if (layer2[target.y_value + 1][target.x_value] == -1 || layer2[target.y_value + 1][target.x_value] >= layer2[target.y_value][target.x_value])
+					bottom_cost = 999999;
+				else
+					bottom_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value + 1][target.x_value];
+				//calculate via cost
+				if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
+					via_cost = 999999;
+				else
+					via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
 
-			//check the min cost direction
+				//check the min cost direction
 
-			//move left if the left cost is the minimum
-			if (left_cost <= bottom_cost && left_cost <= via_cost) {
-				target.x_value--;
-				path.push_back(target);
+				//move left if the left cost is the minimum
+				if (left_cost <= bottom_cost && left_cost <= via_cost) {
+					target.x_value--;
+					path.push_back(target);
+				}
+				//move down if the bottom cost is the minimum
+				else if (bottom_cost <= left_cost && bottom_cost <= via_cost) {
+					target.y_value++;
+					path.push_back(target);
+				}
+				//move to layer2 if the via cost is the minimum
+				else if (via_cost <= left_cost && via_cost <= bottom_cost) {
+					target.layer = 1;
+					path.push_back(target);
+				}
+
 			}
-			//move down if the bottom cost is the minimum
-			else if (bottom_cost <= left_cost && bottom_cost <= via_cost) {
-				target.y_value++;
-				path.push_back(target);
+					break;
 			}
-			//move to layer2 if the via cost is the minimum
-			else if (via_cost <= left_cost && via_cost <= bottom_cost) {
-				target.layer = 1;
-				path.push_back(target);
-			}
-
-		}
-				break;
-		}
 
 		}
 		//check bottom right edge
 		else if (target.x_value == x_size - 1 && target.y_value == y_size - 1) {
-		switch (target.layer)
-		{
-		case 1: {
-			int top_cost, left_cost, via_cost;
+			switch (target.layer)
+			{
+			case 1: {
+				int top_cost, left_cost, via_cost;
 
-			//calculate the left cost
-			if (layer1[target.y_value][target.x_value - 1] == -1 || layer1[target.y_value][target.x_value - 1] >= layer1[target.y_value][target.x_value])
-				left_cost = 999999;
-			else
-				left_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value - 1];
-			//calculate the top cost
-			if (layer1[target.y_value - 1][target.x_value] == -1 || layer1[target.y_value - 1][target.x_value] >= layer1[target.y_value][target.x_value])
-				top_cost = 999999;
-			else
-				top_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value - 1][target.x_value];
+				//calculate the left cost
+				if (layer1[target.y_value][target.x_value - 1] == -1 || layer1[target.y_value][target.x_value - 1] >= layer1[target.y_value][target.x_value])
+					left_cost = 999999;
+				else
+					left_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value - 1];
+				//calculate the top cost
+				if (layer1[target.y_value - 1][target.x_value] == -1 || layer1[target.y_value - 1][target.x_value] >= layer1[target.y_value][target.x_value])
+					top_cost = 999999;
+				else
+					top_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value - 1][target.x_value];
 
-			//calculate via cost
-			if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
-				via_cost = 999999;
-			else
-				via_cost = layer1[target.y_value][target.x_value] - layer2[target.y_value][target.x_value];
+				//calculate via cost
+				if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
+					via_cost = 999999;
+				else
+					via_cost = layer1[target.y_value][target.x_value] - layer2[target.y_value][target.x_value];
 
-			//check the min cost direction
-			//move left if the left cost is the minimum
-			if (left_cost <= top_cost && left_cost <= via_cost) {
-				target.x_value--;
-				path.push_back(target);
+				//check the min cost direction
+				//move left if the left cost is the minimum
+				if (left_cost <= top_cost && left_cost <= via_cost) {
+					target.x_value--;
+					path.push_back(target);
+				}
+				//move up if the top cost is the minimum
+				else if (top_cost <= left_cost && top_cost <= via_cost) {
+					target.y_value--;
+					path.push_back(target);
+				}
+
+				//move to layer2 if the via cost is the minimum
+				else if (via_cost <= left_cost && via_cost <= top_cost) {
+					target.layer = 2;
+					path.push_back(target);
+				}
 			}
-			//move up if the top cost is the minimum
-			else if (top_cost <= left_cost && top_cost <= via_cost) {
-				target.y_value--;
-				path.push_back(target);
+					break;
+			case 2: {
+
+				int top_cost, left_cost, via_cost;
+
+				//calculate the left cost
+				if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
+					left_cost = 999999;
+				else
+					left_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value - 1];
+				//calculate the top cost
+				if (layer2[target.y_value - 1][target.x_value] == -1 || layer2[target.y_value - 1][target.x_value] >= layer2[target.y_value][target.x_value])
+					top_cost = 999999;
+				else
+					top_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value - 1][target.x_value];
+				//calculate via cost
+				if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
+					via_cost = 999999;
+				else
+					via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
+
+				//check the min cost direction
+
+				//move left if the left cost is the minimum
+				if (left_cost <= top_cost && left_cost <= via_cost) {
+					target.x_value--;
+					path.push_back(target);
+				}
+				//move up if the top cost is the minimum
+				else if (top_cost <= left_cost && top_cost <= via_cost) {
+					target.y_value--;
+					path.push_back(target);
+				}
+				//move to layer2 if the via cost is the minimum
+				else if (via_cost <= left_cost && via_cost <= top_cost) {
+					target.layer = 1;
+					path.push_back(target);
+				}
+
 			}
-
-			//move to layer2 if the via cost is the minimum
-			else if (via_cost <= left_cost && via_cost <= top_cost) {
-				target.layer = 2;
-				path.push_back(target);
+					break;
 			}
-		}
-				break;
-		case 2: {
-
-			int top_cost, left_cost, via_cost;
-
-			//calculate the left cost
-			if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
-				left_cost = 999999;
-			else
-				left_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value - 1];
-			//calculate the top cost
-			if (layer2[target.y_value - 1][target.x_value] == -1 || layer2[target.y_value - 1][target.x_value] >= layer2[target.y_value][target.x_value])
-				top_cost = 999999;
-			else
-				top_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value - 1][target.x_value];
-			//calculate via cost
-			if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
-				via_cost = 999999;
-			else
-				via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
-
-			//check the min cost direction
-
-			//move left if the left cost is the minimum
-			if (left_cost <= top_cost && left_cost <= via_cost) {
-				target.x_value--;
-				path.push_back(target);
-			}
-			//move up if the top cost is the minimum
-			else if (top_cost <= left_cost && top_cost <= via_cost) {
-				target.y_value--;
-				path.push_back(target);
-			}
-			//move to layer2 if the via cost is the minimum
-			else if (via_cost <= left_cost && via_cost <= top_cost) {
-				target.layer = 1;
-				path.push_back(target);
-			}
-
-		}
-				break;
-		}
 		}
 		//check left
 		else if (target.x_value == 0) {
@@ -1147,7 +1160,7 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 			case 2: {
 
 				int top_cost, left_cost, bottom_cost, via_cost;
-				
+
 				//calculate the left cost
 				if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
 					left_cost = 999999;
@@ -1170,7 +1183,7 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 					via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
 
 				//check the min cost direction
-				
+
 				//move left if the left cost is the minimum
 				if (left_cost <= top_cost && left_cost <= bottom_cost && left_cost <= via_cost) {
 					target.x_value--;
@@ -1217,7 +1230,7 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 					top_cost = 999999;
 				else
 					top_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value - 1][target.x_value];
-				
+
 				//calculate via cost
 				if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
 					via_cost = 999999;
@@ -1265,7 +1278,7 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 					top_cost = 999999;
 				else
 					top_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value - 1][target.x_value];
-				
+
 				//calculate via cost
 				if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
 					via_cost = 999999;
@@ -1299,126 +1312,126 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 			}
 		}
 		else {
-				switch (target.layer)
-				{
-				case 1: {
-					int right_cost, top_cost, left_cost, bottom_cost, via_cost;
-					//calculate the right cost
-					if (layer1[target.y_value][target.x_value + 1] == -1 || layer1[target.y_value][target.x_value + 1] >= layer1[target.y_value][target.x_value])
-						right_cost = 999999;
-					else
-						right_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value + 1];
-					//calculate the left cost
-					if (layer1[target.y_value][target.x_value - 1] == -1 || layer1[target.y_value][target.x_value - 1] >= layer1[target.y_value][target.x_value])
-						left_cost = 999999;
-					else
-						left_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value - 1];
-					//calculate the top cost
-					if (layer1[target.y_value - 1][target.x_value] == -1 || layer1[target.y_value - 1][target.x_value] >= layer1[target.y_value][target.x_value])
-						top_cost = 999999;
-					else
-						top_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value - 1][target.x_value];
-					//calculate the bottom cost
-					if (layer1[target.y_value + 1][target.x_value] == -1 || layer1[target.y_value + 1][target.x_value] >= layer1[target.y_value][target.x_value])
-						bottom_cost = 999999;
-					else
-						bottom_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value + 1][target.x_value];
-					//calculate via cost
-					if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
-						via_cost = 999999;
-					else
-						via_cost = layer1[target.y_value][target.x_value] - layer2[target.y_value][target.x_value];
+			switch (target.layer)
+			{
+			case 1: {
+				int right_cost, top_cost, left_cost, bottom_cost, via_cost;
+				//calculate the right cost
+				if (layer1[target.y_value][target.x_value + 1] == -1 || layer1[target.y_value][target.x_value + 1] >= layer1[target.y_value][target.x_value])
+					right_cost = 999999;
+				else
+					right_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value + 1];
+				//calculate the left cost
+				if (layer1[target.y_value][target.x_value - 1] == -1 || layer1[target.y_value][target.x_value - 1] >= layer1[target.y_value][target.x_value])
+					left_cost = 999999;
+				else
+					left_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value][target.x_value - 1];
+				//calculate the top cost
+				if (layer1[target.y_value - 1][target.x_value] == -1 || layer1[target.y_value - 1][target.x_value] >= layer1[target.y_value][target.x_value])
+					top_cost = 999999;
+				else
+					top_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value - 1][target.x_value];
+				//calculate the bottom cost
+				if (layer1[target.y_value + 1][target.x_value] == -1 || layer1[target.y_value + 1][target.x_value] >= layer1[target.y_value][target.x_value])
+					bottom_cost = 999999;
+				else
+					bottom_cost = layer1[target.y_value][target.x_value] - layer1[target.y_value + 1][target.x_value];
+				//calculate via cost
+				if (layer2[target.y_value][target.x_value] == -1 || layer2[target.y_value][target.x_value] >= layer1[target.y_value][target.x_value])
+					via_cost = 999999;
+				else
+					via_cost = layer1[target.y_value][target.x_value] - layer2[target.y_value][target.x_value];
 
-					//check the min cost direction
-					//move right if the right cost is the minimum
-					if (right_cost <= left_cost && right_cost <= top_cost && right_cost <= bottom_cost && right_cost <= via_cost) {
-						target.x_value++;
-						path.push_back(target);
-					}
-					//move left if the left cost is the minimum
-					else if (left_cost <= right_cost && left_cost <= top_cost && left_cost <= bottom_cost && left_cost <= via_cost) {
-						target.x_value--;
-						path.push_back(target);
-					}
-					//move up if the top cost is the minimum
-					else if (top_cost <= right_cost && top_cost <= left_cost && top_cost <= bottom_cost && top_cost <= via_cost) {
-						target.y_value--;
-						path.push_back(target);
-					}
-					//move down if the bottom cost is the minimum
-					else if (bottom_cost <= right_cost && bottom_cost <= left_cost && bottom_cost <= top_cost && bottom_cost <= via_cost) {
-						target.y_value++;
-						path.push_back(target);
-					}
-					//move to layer2 if the via cost is the minimum
-					else if (via_cost <= right_cost && via_cost <= left_cost && via_cost <= top_cost && via_cost <= bottom_cost) {
-						target.layer = 2;
-						path.push_back(target);
-					}
+				//check the min cost direction
+				//move right if the right cost is the minimum
+				if (right_cost <= left_cost && right_cost <= top_cost && right_cost <= bottom_cost && right_cost <= via_cost) {
+					target.x_value++;
+					path.push_back(target);
 				}
-						break;
-				case 2: {
-
-					int right_cost, top_cost, left_cost, bottom_cost, via_cost;
-					//calculate the right cost
-					if (layer2[target.y_value][target.x_value + 1] == -1 || layer2[target.y_value][target.x_value + 1] >= layer2[target.y_value][target.x_value])
-						right_cost = 999999;
-					else
-						right_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value + 1];
-					//calculate the left cost
-					if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
-						left_cost = 999999;
-					else
-						left_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value - 1];
-					//calculate the top cost
-					if (layer2[target.y_value - 1][target.x_value] == -1 || layer2[target.y_value - 1][target.x_value] >= layer2[target.y_value][target.x_value])
-						top_cost = 999999;
-					else
-						top_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value - 1][target.x_value];
-					//calculate the bottom cost
-					if (layer2[target.y_value + 1][target.x_value] == -1 || layer2[target.y_value + 1][target.x_value] >= layer2[target.y_value][target.x_value])
-						bottom_cost = 999999;
-					else
-						bottom_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value + 1][target.x_value];
-					//calculate via cost
-					if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
-						via_cost = 999999;
-					else
-						via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
-
-					//check the min cost direction
-					//move right if the right cost is the minimum
-					if (right_cost <= left_cost && right_cost <= top_cost && right_cost <= bottom_cost && right_cost <= via_cost) {
-						target.x_value++;
-						path.push_back(target);
-					}
-					//move left if the left cost is the minimum
-					else if (left_cost <= right_cost && left_cost <= top_cost && left_cost <= bottom_cost && left_cost <= via_cost) {
-						target.x_value--;
-						path.push_back(target);
-
-					}
-					//move up if the top cost is the minimum
-					else if (top_cost <= right_cost && top_cost <= left_cost && top_cost <= bottom_cost && top_cost <= via_cost) {
-						target.y_value--;
-						path.push_back(target);
-
-					}
-					//move down if the bottom cost is the minimum
-					else if (bottom_cost <= right_cost && bottom_cost <= left_cost && bottom_cost <= top_cost && bottom_cost <= via_cost) {
-						target.y_value++;
-						path.push_back(target);
-
-					}
-					//move to layer2 if the via cost is the minimum
-					else if (via_cost <= right_cost && via_cost <= left_cost && via_cost <= top_cost && via_cost <= bottom_cost) {
-						target.layer = 1;
-						path.push_back(target);
-
-					}
+				//move left if the left cost is the minimum
+				else if (left_cost <= right_cost && left_cost <= top_cost && left_cost <= bottom_cost && left_cost <= via_cost) {
+					target.x_value--;
+					path.push_back(target);
 				}
-						break;
+				//move up if the top cost is the minimum
+				else if (top_cost <= right_cost && top_cost <= left_cost && top_cost <= bottom_cost && top_cost <= via_cost) {
+					target.y_value--;
+					path.push_back(target);
 				}
+				//move down if the bottom cost is the minimum
+				else if (bottom_cost <= right_cost && bottom_cost <= left_cost && bottom_cost <= top_cost && bottom_cost <= via_cost) {
+					target.y_value++;
+					path.push_back(target);
+				}
+				//move to layer2 if the via cost is the minimum
+				else if (via_cost <= right_cost && via_cost <= left_cost && via_cost <= top_cost && via_cost <= bottom_cost) {
+					target.layer = 2;
+					path.push_back(target);
+				}
+			}
+					break;
+			case 2: {
+
+				int right_cost, top_cost, left_cost, bottom_cost, via_cost;
+				//calculate the right cost
+				if (layer2[target.y_value][target.x_value + 1] == -1 || layer2[target.y_value][target.x_value + 1] >= layer2[target.y_value][target.x_value])
+					right_cost = 999999;
+				else
+					right_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value + 1];
+				//calculate the left cost
+				if (layer2[target.y_value][target.x_value - 1] == -1 || layer2[target.y_value][target.x_value - 1] >= layer2[target.y_value][target.x_value])
+					left_cost = 999999;
+				else
+					left_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value][target.x_value - 1];
+				//calculate the top cost
+				if (layer2[target.y_value - 1][target.x_value] == -1 || layer2[target.y_value - 1][target.x_value] >= layer2[target.y_value][target.x_value])
+					top_cost = 999999;
+				else
+					top_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value - 1][target.x_value];
+				//calculate the bottom cost
+				if (layer2[target.y_value + 1][target.x_value] == -1 || layer2[target.y_value + 1][target.x_value] >= layer2[target.y_value][target.x_value])
+					bottom_cost = 999999;
+				else
+					bottom_cost = layer2[target.y_value][target.x_value] - layer2[target.y_value + 1][target.x_value];
+				//calculate via cost
+				if (layer1[target.y_value][target.x_value] == -1 || layer1[target.y_value][target.x_value] >= layer2[target.y_value][target.x_value])
+					via_cost = 999999;
+				else
+					via_cost = layer2[target.y_value][target.x_value] - layer1[target.y_value][target.x_value];
+
+				//check the min cost direction
+				//move right if the right cost is the minimum
+				if (right_cost <= left_cost && right_cost <= top_cost && right_cost <= bottom_cost && right_cost <= via_cost) {
+					target.x_value++;
+					path.push_back(target);
+				}
+				//move left if the left cost is the minimum
+				else if (left_cost <= right_cost && left_cost <= top_cost && left_cost <= bottom_cost && left_cost <= via_cost) {
+					target.x_value--;
+					path.push_back(target);
+
+				}
+				//move up if the top cost is the minimum
+				else if (top_cost <= right_cost && top_cost <= left_cost && top_cost <= bottom_cost && top_cost <= via_cost) {
+					target.y_value--;
+					path.push_back(target);
+
+				}
+				//move down if the bottom cost is the minimum
+				else if (bottom_cost <= right_cost && bottom_cost <= left_cost && bottom_cost <= top_cost && bottom_cost <= via_cost) {
+					target.y_value++;
+					path.push_back(target);
+
+				}
+				//move to layer2 if the via cost is the minimum
+				else if (via_cost <= right_cost && via_cost <= left_cost && via_cost <= top_cost && via_cost <= bottom_cost) {
+					target.layer = 1;
+					path.push_back(target);
+
+				}
+			}
+					break;
+			}
 		}
 
 		if (target.layer == 1)
@@ -1434,6 +1447,10 @@ vector<paramters> Back_Track(paramters target, int** layer1, int** layer2, int x
 int main() {
 
 	int x_source = 3, y_source = 5, x_size = 25, y_size = 25;
+
+	vector <paramters> obstacles;
+	vector<vector<paramters>> nets = file_read("input.txt", x_size, y_size, obstacles);
+
 	int**layer1 = new int*[y_size];
 	int**layer2 = new int*[y_size];
 	vector<paramters> full_path;
@@ -1444,22 +1461,11 @@ int main() {
 		layer1[i] = new int[x_size];
 		layer2[i] = new int[x_size];
 	}
-	vector <paramters> obstacles = { {1,5,3}, {2,2,7} , {1,8,2} };
-
-	vector<vector<paramters>> nets=
-
-	{ {{1, 10, 20} , {2, 3, 5}, {1, 4, 5} , {2, 10, 5}},
-	{ {1, 3, 5}, {2, 10, 20} },
-	{ {1, 10, 5}, {2, 3, 15} }
-};
-
-
-		//file_read("input.txt", nets, obstacles);
 
 	int layer1_smallest_value, layer2_smallest_value;
 
 	for (int c = 0; c < nets.size(); c++) {
-		
+
 		//do the element 0
 		//fill layer1
 		x_source = nets[c][0].x_value;
@@ -1492,26 +1498,25 @@ int main() {
 		else if (x_source == x_size - 1 && layer1[y_source][x_source - 1] != -1)
 			layer1[y_source][x_source - 1] = 1;
 		else {
-			if(layer1[y_source][x_source + 1] != -1 )
-			layer1[y_source][x_source + 1] = 1;
-			if(layer1[y_source][x_source - 1] != -1)
-			layer1[y_source][x_source - 1] = 1;
+			if (layer1[y_source][x_source + 1] != -1)
+				layer1[y_source][x_source + 1] = 1;
+			if (layer1[y_source][x_source - 1] != -1)
+				layer1[y_source][x_source - 1] = 1;
 		}
 
 		//fill layer2
 
 		fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size, 10);
 		layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
-
 		if (y_source == 0 && layer2[y_source + 1][x_source] != -1)
 			layer2[y_source + 1][x_source] = 11;
 		else if (y_source == y_size - 1 && layer2[y_source - 1][x_source] != -1)
 			layer2[y_source - 1][x_source] = 11;
 		else {
-			if(layer2[y_source + 1][x_source] != -1)
-			layer2[y_source + 1][x_source] = 11;
-			if(layer2[y_source - 1][x_source] != -1)
-			layer2[y_source - 1][x_source] = 11;
+			if (layer2[y_source + 1][x_source] != -1)
+				layer2[y_source + 1][x_source] = 11;
+			if (layer2[y_source - 1][x_source] != -1)
+				layer2[y_source - 1][x_source] = 11;
 		}
 
 		for (int k = 1; k < nets[c].size(); k++) {
@@ -1520,92 +1525,96 @@ int main() {
 			target.x_value = nets[c][k].x_value;
 			target.y_value = nets[c][k].y_value;
 			bool target_exist = true;
+			//check if the point exists in the path
 			for (int i = 0; i < full_path.size();i++)
 				if (target.layer == full_path[i].layer && target.x_value == full_path[i].x_value && target.y_value == full_path[i].y_value)
 					target_exist = false;
-
+			//skip if it exists
 			if (target_exist) {
 
-			path.clear();
-			path = Back_Track(target, layer1, layer2, x_size, y_size);
+				path.clear();
+				path = Back_Track(target, layer1, layer2, x_size, y_size);
 
 
+				x_source = nets[c][k].x_value;
+				y_source = nets[c][k].y_value;
+				for (int i = 0; i < y_size; i++)
+					for (int j = 0; j < x_size; j++) {
+						layer1[i][j] = 1;
+						layer2[i][j] = 11;
+					}
 
-			x_source = nets[c][k].x_value;
-			y_source = nets[c][k].y_value;
-			for (int i = 0; i < y_size; i++)
-				for (int j = 0; j < x_size; j++) {
-					layer1[i][j] = 1;
-					layer2[i][j] = 11;
-				}
+				//fill the obstacles here
 
-			//fill the obstacles here
-
-			for (int i = 0; i < obstacles.size(); i++) {
-				if (obstacles[i].layer == 1) {
-					layer1[obstacles[i].y_value][obstacles[i].x_value] = -1;
-				}
-				else {
-					layer2[obstacles[i].y_value][obstacles[i].x_value] = -1;
-				}
-			}
-
-
-			for (int i = 0; i < path.size(); i++) {
-				if (path[i].layer == 1) {
-					layer1[path[i].y_value][path[i].x_value] = 0;
-				}
-				full_path.push_back(path[i]);
-			}
-
-			fill_layer1(x_source, y_source, layer1, x_size, y_size, 0);
-
-			for (int i = 0; i < path.size(); i++) {
-				if (path[i].layer == 1) {
-					y_source = path[i].y_value;
-					x_source = path[i].x_value;
-					if (x_source == 0 && layer1[path[i].y_value][path[i].x_value + 1] != 0 && layer1[path[i].y_value][path[i].x_value + 1] != -1)
-						layer1[path[i].y_value][path[i].x_value + 1] = 1;
-					else if (x_source == x_size - 1 && layer1[path[i].y_value][path[i].x_value - 1] != 0 && layer1[path[i].y_value][path[i].x_value - 1] != -1)
-						layer1[path[i].y_value][path[i].x_value - 1] = 1;
+				for (int i = 0; i < obstacles.size(); i++) {
+					if (obstacles[i].layer == 1) {
+						layer1[obstacles[i].y_value][obstacles[i].x_value] = -1;
+					}
 					else {
-						if (layer1[path[i].y_value][path[i].x_value + 1] != 0 && layer1[path[i].y_value][path[i].x_value + 1] != -1)
+						layer2[obstacles[i].y_value][obstacles[i].x_value] = -1;
+					}
+				}
+
+				//set the sources to be 0
+				for (int i = 0; i < path.size(); i++) {
+					if (path[i].layer == 1) {
+						layer1[path[i].y_value][path[i].x_value] = 0;
+					}
+					full_path.push_back(path[i]);
+				}
+				//fill the rest of layer1
+				fill_layer1(x_source, y_source, layer1, x_size, y_size, 0);
+
+				for (int i = 0; i < path.size(); i++) {
+					if (path[i].layer == 1) {
+						y_source = path[i].y_value;
+						x_source = path[i].x_value;
+						if (x_source == 0 && layer1[path[i].y_value][path[i].x_value + 1] != 0 && layer1[path[i].y_value][path[i].x_value + 1] != -1)
 							layer1[path[i].y_value][path[i].x_value + 1] = 1;
-						if (layer1[path[i].y_value][path[i].x_value - 1] != 0 && layer1[path[i].y_value][path[i].x_value - 1] != -1)
+						else if (x_source == x_size - 1 && layer1[path[i].y_value][path[i].x_value - 1] != 0 && layer1[path[i].y_value][path[i].x_value - 1] != -1)
 							layer1[path[i].y_value][path[i].x_value - 1] = 1;
+						else {
+							if (layer1[path[i].y_value][path[i].x_value + 1] != 0 && layer1[path[i].y_value][path[i].x_value + 1] != -1)
+								layer1[path[i].y_value][path[i].x_value + 1] = 1;
+							if (layer1[path[i].y_value][path[i].x_value - 1] != 0 && layer1[path[i].y_value][path[i].x_value - 1] != -1)
+								layer1[path[i].y_value][path[i].x_value - 1] = 1;
+						}
 					}
 				}
-			}
 
-
-			for (int i = 0; i < path.size(); i++) {
-				if (path[i].layer == 2) {
-					layer2[path[i].y_value][path[i].x_value] = 0;
-				}
-			}
-			x_source = nets[c][0].x_value;
-			y_source = nets[c][0].y_value;
-			fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size, 10);
-			layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
-
-
-			for (int i = 0; i < path.size(); i++) {
-				if (path[i].layer == 2) {
-					y_source = path[i].y_value;
-					x_source = path[i].x_value;
-					if (y_source == 0 && layer2[y_source + 1][x_source] != 0 && layer2[y_source + 1][x_source] != -1)
-						layer2[y_source + 1][x_source] = 11;
-					else if (y_source == y_size - 1 && layer2[y_source - 1][x_source] != 0 && layer2[y_source - 1][x_source] != -1)
-						layer2[y_source - 1][x_source] = 11;
-					else {
-						if (layer2[y_source + 1][x_source] != 0 && layer2[y_source + 1][x_source] != -1)
-							layer2[y_source + 1][x_source] = 11;
-						if (layer2[y_source - 1][x_source] != 0 && layer2[y_source - 1][x_source] != -1)
-							layer2[y_source - 1][x_source] = 11;
+				//set the sources of layer2 to 0
+				for (int i = 0; i < path.size(); i++) {
+					if (path[i].layer == 2) {
+						layer2[path[i].y_value][path[i].x_value] = 0;
 					}
 				}
+				x_source = nets[c][0].x_value;
+				y_source = nets[c][0].y_value;
+				if (nets[c][1].layer != 1) {
+					fill_layer2(x_source, y_source, layer1, layer2, x_size, y_size, 10);
+					layer2[y_source][x_source] = layer1[y_source][x_source] + 10;
+
+
+
+					for (int i = 0; i < path.size(); i++) {
+						if (path[i].layer == 2) {
+							y_source = path[i].y_value;
+							x_source = path[i].x_value;
+							if (y_source == 0 && layer2[y_source + 1][x_source] != 0 && layer2[y_source + 1][x_source] != -1)
+								layer2[y_source + 1][x_source] = 11;
+							else if (y_source == y_size - 1 && layer2[y_source - 1][x_source] != 0 && layer2[y_source - 1][x_source] != -1)
+								layer2[y_source - 1][x_source] = 11;
+							else {
+								if (layer2[y_source + 1][x_source] != 0 && layer2[y_source + 1][x_source] != -1)
+									layer2[y_source + 1][x_source] = 11;
+								if (layer2[y_source - 1][x_source] != 0 && layer2[y_source - 1][x_source] != -1)
+									layer2[y_source - 1][x_source] = 11;
+							}
+						}
+					}
+
+				}
 			}
-		}
 		}
 
 		output_nets.push_back(full_path);
@@ -1617,7 +1626,7 @@ int main() {
 	for (int i = 0; i < output_nets.size(); i++) {
 		output_file << "net" << i + 1;
 		for (int j = 0; j < output_nets[i].size(); j++)
-			output_file <<" (" << output_nets[i][j].layer << "," << output_nets[i][j].x_value << "," << output_nets[i][j].y_value << ")" << " ";
+			output_file << " (" << output_nets[i][j].layer << "," << output_nets[i][j].x_value << "," << output_nets[i][j].y_value << ")" << " ";
 
 		output_file << "\n";
 	}
